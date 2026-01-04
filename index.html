@@ -13,6 +13,8 @@
       text-align: center;
       background-color: #f5f7fa;
       color: #333;
+      position: relative;
+      overflow-x: hidden;
     }
     header {
       margin-bottom: 30px;
@@ -44,6 +46,7 @@
       font-size: 18px;
       margin: 10px 0;
     }
+    .hidden { display:none; }
     footer {
       margin-top: 50px;
       padding: 20px;
@@ -70,15 +73,29 @@
       transform: scale(1.05);
     }
     @media (max-width: 500px) {
-      footer div {
-        flex-direction: column;
-      }
+      footer div { flex-direction: column; }
+    }
+    /* Снежинки */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      z-index: 9999;
+      user-select: none;
+      pointer-events: none;
+      color: #fff;
+      font-size: 1em;
+      opacity: 0.8;
+      animation-name: fall;
+      animation-timing-function: linear;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
     }
   </style>
 </head>
 <body>
   <header>
-    <!-- Контейнер для текста -->
     <div id="text-container">
       <p data-lang="uk"></p>
       <p data-lang="uk"></p>
@@ -87,8 +104,6 @@
       <p data-lang="en" class="hidden"></p>
       <p data-lang="en" class="hidden"></p>
     </div>
-
-    <!-- Переключатель языков -->
     <div class="lang-switch">
       <button class="active" onclick="switchLang('uk', this)">Українська</button>
       <button onclick="switchLang('ru', this)">Русский</button>
@@ -105,6 +120,7 @@
   </footer>
 
   <script>
+    // Тексты для языков
     const texts = {
       uk: [
         "ZELLO — офіційний сайт торгової марки.",
@@ -134,12 +150,10 @@
     }
 
     function switchLang(lang, btn) {
-      // Подсветка кнопки
       document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // Пишем текст с эффектом печатной машинки
-      const elements = document.querySelectorAll(`#text-container p`);
+      const elements = document.querySelectorAll('#text-container p');
       texts[lang].forEach((txt, idx) => {
         elements[idx].classList.remove('hidden');
         typeWriter(elements[idx], txt);
@@ -148,9 +162,8 @@
       // Скрываем остальные
       const otherLangs = Object.keys(texts).filter(l => l !== lang);
       otherLangs.forEach(l => {
-        const indices = Object.keys(texts[l]);
-        indices.forEach((_, idx) => {
-          const el = elements[idx + Object.keys(texts[lang]).length]; // смещение
+        texts[l].forEach((_, idx) => {
+          const el = elements[idx + texts[lang].length];
           if(el) el.classList.add('hidden');
         });
       });
@@ -158,6 +171,23 @@
 
     // Инициализация по умолчанию
     switchLang('uk', document.querySelector('.lang-switch button.active'));
+
+    // Снежинки
+    const now = new Date();
+    const month = now.getMonth() + 1; // 1-12
+    if(month === 12 || month === 1 || month === 2){
+      const snowCount = 50;
+      for(let i=0; i<snowCount; i++){
+        const snow = document.createElement('div');
+        snow.className = 'snowflake';
+        snow.style.left = Math.random() * 100 + 'vw';
+        snow.style.fontSize = 10 + Math.random() * 20 + 'px';
+        snow.style.animationDuration = 5 + Math.random() * 5 + 's';
+        snow.style.opacity = 0.5 + Math.random()*0.5;
+        snow.innerHTML = '❄';
+        document.body.appendChild(snow);
+      }
+    }
   </script>
 </body>
 </html>
