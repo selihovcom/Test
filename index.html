@@ -28,32 +28,21 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      background-color: #007bff;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
       color: white;
     }
     .lang-switch button.active {
-      background-color: #0056b3;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    }
+    .lang-switch button:hover {
       transform: scale(1.05);
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
     }
-    .lang-switch button:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
-    }
     p[data-lang] {
-      transition: all 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
-    }
-    .hidden {
-      display: block;
-      opacity: 0;
-      transform: translateY(-15px);
-      height: 0;
-      overflow: hidden;
-    }
-    .visible {
-      opacity: 1;
-      transform: translateY(0);
-      height: auto;
+      min-height: 30px;
+      font-size: 18px;
+      margin: 10px 0;
     }
     footer {
       margin-top: 50px;
@@ -62,11 +51,7 @@
       color: white;
       text-align: center;
       border-radius: 10px 10px 0 0;
-      animation: fadeInFooter 1s ease forwards;
-    }
-    @keyframes fadeInFooter {
-      0% {opacity:0; transform: translateY(20px);}
-      100% {opacity:1; transform: translateY(0);}
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
     }
     footer a {
       display: inline-flex;
@@ -93,15 +78,15 @@
 </head>
 <body>
   <header>
-    <!-- Тексты для каждого языка -->
-    <p data-lang="uk" class="visible">ZELLO — офіційний сайт торгової марки.</p>
-    <p data-lang="uk" class="visible">Інформаційний ресурс. Проєкт знаходиться на стадії розробки.</p>
-
-    <p data-lang="ru" class="hidden">ZELLO — официальный сайт торговой марки.</p>
-    <p data-lang="ru" class="hidden">Информационный ресурс. Проект находится в стадии разработки.</p>
-
-    <p data-lang="en" class="hidden">ZELLO — official website of the brand.</p>
-    <p data-lang="en" class="hidden">Informational resource. Project is under development.</p>
+    <!-- Контейнер для текста -->
+    <div id="text-container">
+      <p data-lang="uk"></p>
+      <p data-lang="uk"></p>
+      <p data-lang="ru" class="hidden"></p>
+      <p data-lang="ru" class="hidden"></p>
+      <p data-lang="en" class="hidden"></p>
+      <p data-lang="en" class="hidden"></p>
+    </div>
 
     <!-- Переключатель языков -->
     <div class="lang-switch">
@@ -111,7 +96,6 @@
     </div>
   </header>
 
-  <!-- футер -->
   <footer>
     <p style="margin:0 0 10px 0; font-size:16px; font-weight:bold;">Зв'язатися з нами</p>
     <div style="display:flex; justify-content:center; gap:20px; flex-wrap: wrap;">
@@ -121,21 +105,59 @@
   </footer>
 
   <script>
+    const texts = {
+      uk: [
+        "ZELLO — офіційний сайт торгової марки.",
+        "Інформаційний ресурс. Проєкт знаходиться на стадії розробки."
+      ],
+      ru: [
+        "ZELLO — официальный сайт торговой марки.",
+        "Информационный ресурс. Проект находится в стадии разработки."
+      ],
+      en: [
+        "ZELLO — official website of the brand.",
+        "Informational resource. Project is under development."
+      ]
+    };
+
+    function typeWriter(element, text, delay = 50) {
+      element.textContent = '';
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, delay);
+        }
+      }
+      type();
+    }
+
     function switchLang(lang, btn) {
-      // Скрываем все тексты
-      document.querySelectorAll('[data-lang]').forEach(el => {
-        el.classList.remove('visible');
-        el.classList.add('hidden');
-      });
-      // Показываем выбранный язык с анимацией
-      document.querySelectorAll(`[data-lang="${lang}"]`).forEach(el => {
-        el.classList.remove('hidden');
-        el.classList.add('visible');
-      });
-      // Подсветка активной кнопки
+      // Подсветка кнопки
       document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+
+      // Пишем текст с эффектом печатной машинки
+      const elements = document.querySelectorAll(`#text-container p`);
+      texts[lang].forEach((txt, idx) => {
+        elements[idx].classList.remove('hidden');
+        typeWriter(elements[idx], txt);
+      });
+
+      // Скрываем остальные
+      const otherLangs = Object.keys(texts).filter(l => l !== lang);
+      otherLangs.forEach(l => {
+        const indices = Object.keys(texts[l]);
+        indices.forEach((_, idx) => {
+          const el = elements[idx + Object.keys(texts[lang]).length]; // смещение
+          if(el) el.classList.add('hidden');
+        });
+      });
     }
+
+    // Инициализация по умолчанию
+    switchLang('uk', document.querySelector('.lang-switch button.active'));
   </script>
 </body>
 </html>
