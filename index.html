@@ -1,22 +1,141 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
-<meta charset="UTF-8">
-<title>ZELLO</title>
-<style>
-  body { display:flex; justify-content:center; align-items:center; height:100vh; background:#000; color:#fff; font-family:sans-serif; }
-  .dancing { font-size:2em; position:relative; display:inline-block; }
-  .dot { color:red; animation:jump 0.5s infinite alternate; }
-  @keyframes jump {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0); }
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>ZELLO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    header {
+      margin-bottom: 30px;
+    }
+    .lang-switch {
+      margin: 20px 0;
+    }
+    .lang-switch button {
+      padding: 8px 15px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: #007bff;
+      color: white;
+    }
+    .lang-switch button.active {
+      background-color: #0056b3;
+      transform: scale(1.05);
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .lang-switch button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    p[data-lang] {
+      transition: all 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+    }
+    .hidden {
+      display: block;
+      opacity: 0;
+      transform: translateY(-15px);
+      height: 0;
+      overflow: hidden;
+    }
+    .visible {
+      opacity: 1;
+      transform: translateY(0);
+      height: auto;
+    }
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: white;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      animation: fadeInFooter 1s ease forwards;
+    }
+    @keyframes fadeInFooter {
+      0% {opacity:0; transform: translateY(20px);}
+      100% {opacity:1; transform: translateY(0);}
+    }
+    footer a {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 18px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin: 5px;
+      transition: all 0.3s ease;
+    }
+    footer a:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+    @media (max-width: 500px) {
+      footer div {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="dancing">
-    ZELLO<span class="dot">•</span><span class="dot">•</span><span class="dot">•</span>
-  </div>
+  <header>
+    <!-- Тексты для каждого языка -->
+    <p data-lang="uk" class="visible">ZELLO — офіційний сайт торгової марки.</p>
+    <p data-lang="uk" class="visible">Інформаційний ресурс. Проєкт знаходиться на стадії розробки.</p>
+
+    <p data-lang="ru" class="hidden">ZELLO — официальный сайт торговой марки.</p>
+    <p data-lang="ru" class="hidden">Информационный ресурс. Проект находится в стадии разработки.</p>
+
+    <p data-lang="en" class="hidden">ZELLO — official website of the brand.</p>
+    <p data-lang="en" class="hidden">Informational resource. Project is under development.</p>
+
+    <!-- Переключатель языков -->
+    <div class="lang-switch">
+      <button class="active" onclick="switchLang('uk', this)">Українська</button>
+      <button onclick="switchLang('ru', this)">Русский</button>
+      <button onclick="switchLang('en', this)">English</button>
+    </div>
+  </header>
+
+  <!-- футер -->
+  <footer>
+    <p style="margin:0 0 10px 0; font-size:16px; font-weight:bold;">Зв'язатися з нами</p>
+    <div style="display:flex; justify-content:center; gap:20px; flex-wrap: wrap;">
+      <a href="mailto:selihov.com@gmail.com">📧 selihov.com@gmail.com</a>
+      <a href="https://t.me/Selihov_Kharkiv" target="_blank">✈️ @Selihov_Kharkiv</a>
+    </div>
+  </footer>
+
+  <script>
+    function switchLang(lang, btn) {
+      // Скрываем все тексты
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.classList.remove('visible');
+        el.classList.add('hidden');
+      });
+      // Показываем выбранный язык с анимацией
+      document.querySelectorAll(`[data-lang="${lang}"]`).forEach(el => {
+        el.classList.remove('hidden');
+        el.classList.add('visible');
+      });
+      // Подсветка активной кнопки
+      document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
 </body>
 </html>
